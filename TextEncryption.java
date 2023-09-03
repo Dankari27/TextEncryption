@@ -19,35 +19,81 @@ public class TextEncryption {
     }
 
     public static String transformWord(String word) {
-        if (word.length() == 1 && Character.isLetter(word.charAt(0))) {
-            char originalChar = word.charAt(0);
-            char nextChar = (char) (originalChar + 1);
-
-            // Check for wrapping around from 'z' to 'a' or 'Z' to 'A'
-            if (originalChar == 'z') {
-                nextChar = 'a';
-            } else if (originalChar == 'Z') {
-                nextChar = 'A';
+        if (hasTwoOrMoreEvenLetters(word)) {
+            char[] chars = word.toCharArray();
+            for (int i = 0; i < chars.length - 1; i += 2) {
+                char temp = chars[i];
+                chars[i] = chars[i + 1];
+                chars[i + 1] = temp;
             }
-
-            return String.valueOf(nextChar);
+            return new String(chars);
+        } else if (hasThreeOrMoreOddLetters(word)) {
+            char[] chars = word.toCharArray();
+            char temp = chars[0];
+            chars[0] = chars[chars.length - 1];
+            chars[chars.length - 1] = temp;
+            return new String(chars);
         }
 
         return word;
 
-        // Start here and finish rest of code
-        // CODE GOES BELOW HERE
+    }
+
+    public static boolean hasThreeOrMoreOddLetters(String word) {
+        int oddCount = 0;
+        for (char c : word.toCharArray()) {
+            if (Character.isLetter(c) && (c - 'a') % 2 != 0) {
+                oddCount++;
+                if (oddCount >= 3) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasTwoOrMoreEvenLetters(String word) {
+        int evenCount = 0;
+        for (char c : word.toCharArray()) {
+            if (Character.isLetter(c) && (c - 'a') % 2 == 0) {
+                evenCount++;
+                if (evenCount >= 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
     }
 
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        prompt();
+        while (true) {
+
+            System.out.print("Would you like to encrypt more text (yes/no)? ");
+            String input = sc.next();
+            if (input.equals("no")) {
+                System.out.println("Quitting...");
+                break;
+            } else if (input.equals("yes")) {
+                prompt();
+            } else {
+                System.out.println("Invalid input. Please enter 'yes' or 'no'.");
+            }
+        }
+
+        sc.close();
+    }
+
+    public static void prompt() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter a word: ");
         String input = scanner.nextLine();
-        scanner.close();
 
         String transformedWord = transformInput(input);
 
-        System.out.println(transformedWord);
-
+        System.out.println(transformedWord.toLowerCase());
     }
+
 }
